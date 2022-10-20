@@ -54,6 +54,10 @@ class Factor:
         indices = tuple(self.outcomeSpace[var].index(outcomes[i]) for i, var in enumerate(self.domain))
         self.table[indices] = new_value
             
+    def __iter__(self):
+        for x in np.nditer(self.table):
+            yield x
+
     def join(self, other):
         '''
         This function multiplies two factors: one in this object and the factor in `other`
@@ -135,6 +139,11 @@ class Factor:
         indices = tuple(self.outcomeSpace[v].index(evi[v]) if v in evi else slice(None) for v in self.domain)
         f.table = f.table[indices]
         f.domain = tuple(v for v in f.domain if v not in evi)
+        for var, value in evi.items():
+            if var in f.domain:
+                
+                # modify the outcomeSpace to correspond to the changes just made to self.table
+                f.outcomeSpace[var] = (value,)
         return f        
     
     def marginalize(self, var):
